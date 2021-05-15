@@ -185,18 +185,40 @@ std::ostream &operator<<(std::ostream &os, const Cuboid &c)
 std::ofstream &operator<<(std::ofstream &ofs, const Cuboid &c)
 {
     ofs << std::setprecision(10) << std::fixed;
-    int i = 0;
-    for (Vector3D vertice : c.vertices)
-    {
-        ofs << vertice;
-        ofs << std::endl;
-        if (i % 2)
-            ofs << std::endl;
-        i++;
-    }
 
-    ofs << c.vertices[0] << std::endl;
-    ofs << c.vertices[1] << std::endl;
+    Vector3D min, max, mid;
+
+    min = c[0];
+    max = c[5];
+    mid = (c[0] + c[5]) / 2;
+
+    Vector3D up({mid[0], min[1], mid[2]}), down({mid[0], max[1], mid[2]});
+
+    ofs << up << std::endl;
+    ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
+    ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << down << "\n#\n\n";
+
+    ofs << up << std::endl;
+    ofs << max[0] << " " << min[1] << " " << min[2] << std::endl;
+    ofs << max[0] << " " << max[1] << " " << min[2] << std::endl;
+    ofs << down << "\n#\n\n";
+
+    ofs << up << std::endl;
+    ofs << min[0] << " " << min[1] << " " << min[2] << std::endl;
+    ofs << min[0] << " " << max[1] << " " << min[2] << std::endl;
+    ofs << down << "\n#\n\n";
+
+    ofs << up << std::endl;
+    ofs << min[0] << " " << min[1] << " " << max[2] << std::endl;
+    ofs << min[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << down << "\n#\n\n";
+
+    ofs << up << std::endl;
+    ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
+    ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << down << "\n#\n\n";
+
     return ofs;
 }
 
