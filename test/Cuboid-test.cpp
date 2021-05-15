@@ -189,26 +189,26 @@ TEST(Cuboid, Scale)
     EXPECT_EQ(c[7][2], -10);
 }
 
-TEST(Cuboid, Side_length)
-{
-    Cuboid c1(2, 2, 2, 10, 10, 10);
+// TEST(Cuboid, Side_length)
+// {
+//     Cuboid c1(2, 2, 2, 10, 10, 10);
 
-    std::stringstream test;
-    testing::internal::CaptureStdout();
-    c1.Side_length();
-    std::string output = testing::internal::GetCapturedStdout();
+//     std::stringstream test;
+//     testing::internal::CaptureStdout();
+//     c1.Side_length();
+//     std::string output = testing::internal::GetCapturedStdout();
 
-    test << "Longer sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\nShorter sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\nVertical sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\n";
-    EXPECT_EQ(output, test.str());
-    test.str(std::string());
+//     test << "Longer sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\nShorter sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\nVertical sides are equal\nFirst: 8.0000000000\nSecond: 8.0000000000\nThird: 8.0000000000\nFourth: 8.0000000000\n";
+//     EXPECT_EQ(output, test.str());
+//     test.str(std::string());
 
-    Cuboid c2(0, 0, 0, 100, 10, 10);
+//     Cuboid c2(0, 0, 0, 100, 10, 10);
 
-    testing::internal::CaptureStdout();
-    c2.Side_length();
-    output = testing::internal::GetCapturedStdout();
+//     testing::internal::CaptureStdout();
+//     c2.Side_length();
+//     output = testing::internal::GetCapturedStdout();
 
-    test << "Longer sides are equal\nFirst: 100.0000000000\nSecond: 100.0000000000\nThird: 100.0000000000\nFourth: 100.0000000000\nShorter sides are equal\nFirst: 10.0000000000\nSecond: 10.0000000000\nThird: 10.0000000000\nFourth: 10.0000000000\nVertical sides are equal\nFirst: 10.0000000000\nSecond: 10.0000000000\nThird: 10.0000000000\nFourth: 10.0000000000\n";
-    EXPECT_EQ(output, test.str());
-    test.str(std::string());
-}
+//     test << "Longer sides are equal\nFirst: 100.0000000000\nSecond: 100.0000000000\nThird: 100.0000000000\nFourth: 100.0000000000\nShorter sides are equal\nFirst: 10.0000000000\nSecond: 10.0000000000\nThird: 10.0000000000\nFourth: 10.0000000000\nVertical sides are equal\nFirst: 10.0000000000\nSecond: 10.0000000000\nThird: 10.0000000000\nFourth: 10.0000000000\n";
+//     EXPECT_EQ(output, test.str());
+//     test.str(std::string());
+// }

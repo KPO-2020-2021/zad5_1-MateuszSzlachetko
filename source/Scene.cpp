@@ -145,7 +145,7 @@ void Scene::Display_vertices()
 void Scene::Check_side_length()
 {
     std::cout << std::endl;
-    _cuboid.Side_length();
+    //_cuboid.Side_length();
     std::cout << std::endl;
 }
 

@@ -4,6 +4,12 @@ Cuboid::Cuboid()
 {
     for (Vector3D vertice : vertices)
         vertice = Vector3D({0, 0, 0});
+
+    position = Vector3D();
+
+    orientation = Matrix3x3({1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1});
 }
 
 Cuboid::Cuboid(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -20,6 +26,12 @@ Cuboid::Cuboid(double x1, double y1, double z1, double x2, double y2, double z2)
     vertices[5] = Vector3D({x2, y2, z2});
     vertices[6] = Vector3D({x1, y1, z2});
     vertices[7] = Vector3D({x2, y1, z2});
+
+    position = Vector3D();
+
+    orientation = Matrix3x3({1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1});
 }
 
 Cuboid::Cuboid(std::vector<Vector3D> &vectors)
@@ -27,6 +39,12 @@ Cuboid::Cuboid(std::vector<Vector3D> &vectors)
     int index = 0;
     for (Vector3D vertice : vectors)
         vertices[index++] = vertice;
+
+    position = Vector3D();
+
+    orientation = Matrix3x3({1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1});
 }
 
 Cuboid Cuboid::Rotation(Matrix3x3 &rotation_matrix)
@@ -38,7 +56,7 @@ Cuboid Cuboid::Rotation(Matrix3x3 &rotation_matrix)
     return *this;
 }
 
-Cuboid Cuboid::Translate(Vector3D translation_vector) // not a reference to pass a consturctor
+Cuboid Cuboid::Translate(Vector3D translation_vector) // not a reference to pass a constructor
 {
     for (int i = 0; i < SIZE; ++i)
     {
@@ -54,120 +72,6 @@ Cuboid Cuboid::Scale(double scalar)
         vertices[i] = vertices[i] * scalar;
     }
     return *this;
-}
-
-void Cuboid::Side_length() const
-{
-    std::cout << std::setprecision(10) << std::fixed;
-    double sideW1_W2, sideW3_W4, sideW5_W6, sideW7_W8; // set 1
-    double sideW2_W4, sideW1_W3, sideW8_W6, sideW7_W5; // set 2
-
-    double sideW1_W7, sideW2_W8, sideW4_W6, sideW3_W5; // along Z axis
-
-    sideW1_W2 = (vertices[0] - vertices[1]).Length();
-    sideW3_W4 = (vertices[2] - vertices[3]).Length();
-    sideW5_W6 = (vertices[4] - vertices[5]).Length();
-    sideW7_W8 = (vertices[6] - vertices[7]).Length();
-
-    sideW2_W4 = (vertices[1] - vertices[3]).Length();
-    sideW1_W3 = (vertices[0] - vertices[2]).Length();
-    sideW8_W6 = (vertices[7] - vertices[5]).Length();
-    sideW7_W5 = (vertices[6] - vertices[4]).Length();
-
-    sideW1_W7 = (vertices[0] - vertices[6]).Length();
-    sideW2_W8 = (vertices[1] - vertices[7]).Length();
-    sideW4_W6 = (vertices[3] - vertices[5]).Length();
-    sideW3_W5 = (vertices[2] - vertices[4]).Length();
-
-    if (sideW1_W2 > sideW2_W4) // first set of sides is longer
-    {
-        if ((std::abs(sideW1_W2 - sideW3_W4) < MIN_DIFF) && (std::abs(sideW1_W2 - sideW5_W6) < MIN_DIFF) && (std::abs(sideW1_W2 - sideW7_W8) < MIN_DIFF))
-        {
-            std::cout << "Longer sides are equal" << std::endl;
-            std::cout << "First: " << sideW1_W2 << std::endl;
-            std::cout << "Second: " << sideW3_W4 << std::endl;
-            std::cout << "Third: " << sideW5_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W8 << std::endl;
-        }
-        else
-        {
-            std::cout << "Longer sides are not equal" << std::endl;
-            std::cout << "First: " << sideW1_W2 << std::endl;
-            std::cout << "Second: " << sideW3_W4 << std::endl;
-            std::cout << "Third: " << sideW5_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W8 << std::endl;
-        }
-
-        if ((std::abs(sideW2_W4 - sideW1_W3) < MIN_DIFF) && (std::abs(sideW2_W4 - sideW8_W6) < MIN_DIFF) && (std::abs(sideW2_W4 - sideW7_W5) < MIN_DIFF))
-        {
-            std::cout << "Shorter sides are equal" << std::endl;
-            std::cout << "First: " << sideW2_W4 << std::endl;
-            std::cout << "Second: " << sideW1_W3 << std::endl;
-            std::cout << "Third: " << sideW8_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W5 << std::endl;
-        }
-        else
-        {
-            std::cout << "Shorter sides are not equal" << std::endl;
-            std::cout << "First: " << sideW2_W4 << std::endl;
-            std::cout << "Second: " << sideW1_W3 << std::endl;
-            std::cout << "Third: " << sideW8_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W5 << std::endl;
-        }
-    }
-    else // second set of sides is longer
-    {
-        if ((std::abs(sideW2_W4 - sideW1_W3) < MIN_DIFF) && (std::abs(sideW2_W4 - sideW8_W6) < MIN_DIFF) && (std::abs(sideW2_W4 - sideW7_W5) < MIN_DIFF))
-        {
-            std::cout << "Longer sides are equal" << std::endl;
-            std::cout << "First: " << sideW2_W4 << std::endl;
-            std::cout << "Second: " << sideW1_W3 << std::endl;
-            std::cout << "Third: " << sideW8_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W5 << std::endl;
-        }
-        else
-        {
-            std::cout << "Longer sides are not equal" << std::endl;
-            std::cout << "First: " << sideW2_W4 << std::endl;
-            std::cout << "Second: " << sideW1_W3 << std::endl;
-            std::cout << "Third: " << sideW8_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W5 << std::endl;
-        }
-
-        if ((std::abs(sideW1_W2 - sideW3_W4) < MIN_DIFF) && (std::abs(sideW1_W2 - sideW5_W6) < MIN_DIFF) && (std::abs(sideW1_W2 - sideW7_W8) < MIN_DIFF))
-        {
-            std::cout << "Shorter sides are equal" << std::endl;
-            std::cout << "First: " << sideW1_W2 << std::endl;
-            std::cout << "Second: " << sideW3_W4 << std::endl;
-            std::cout << "Third: " << sideW5_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W8 << std::endl;
-        }
-        else
-        {
-            std::cout << "Shorter sides are not equal" << std::endl;
-            std::cout << "First: " << sideW1_W2 << std::endl;
-            std::cout << "Second: " << sideW3_W4 << std::endl;
-            std::cout << "Third: " << sideW5_W6 << std::endl;
-            std::cout << "Fourth: " << sideW7_W8 << std::endl;
-        }
-    }
-
-    if ((std::abs(sideW1_W7 - sideW2_W8) < MIN_DIFF) && (std::abs(sideW1_W7 - sideW4_W6) < MIN_DIFF) && (std::abs(sideW1_W7 - sideW3_W5) < MIN_DIFF))
-    {
-        std::cout << "Vertical sides are equal" << std::endl;
-        std::cout << "First: " << sideW1_W7 << std::endl;
-        std::cout << "Second: " << sideW2_W8 << std::endl;
-        std::cout << "Third: " << sideW4_W6 << std::endl;
-        std::cout << "Fourth: " << sideW3_W5 << std::endl;
-    }
-    else
-    {
-        std::cout << "Vertical sides are not equal" << std::endl;
-        std::cout << "First: " << sideW1_W7 << std::endl;
-        std::cout << "Second: " << sideW2_W8 << std::endl;
-        std::cout << "Third: " << sideW4_W6 << std::endl;
-        std::cout << "Fourth: " << sideW3_W5 << std::endl;
-    }
 }
 
 std::ostream &operator<<(std::ostream &os, const Cuboid &c)
@@ -186,38 +90,115 @@ std::ofstream &operator<<(std::ofstream &ofs, const Cuboid &c)
 {
     ofs << std::setprecision(10) << std::fixed;
 
-    Vector3D min, max, mid;
+    // 3 2 | 7 6
+    // 0 1 | 4 5
 
-    min = c[0];
-    max = c[5];
-    mid = (c[0] + c[5]) / 2;
+    // 0 2 | 6 4
+    // 1 3 | 7 5
 
-    Vector3D up({mid[0], min[1], mid[2]}), down({mid[0], max[1], mid[2]});
+    Vector3D up, down;
+
+    up = c.vertices[6];
+    up = up - c.vertices[1];
+    up = up / 2;
+    up = up + c.vertices[1];
+
+    down = c.vertices[4];
+    down = down - c.vertices[3];
+    down = down / 2;
+    down = down + c.vertices[3];
 
     ofs << up << std::endl;
-    ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
-    ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << c.vertices[6] << std::endl;
+    ofs << c.vertices[4] << std::endl;
     ofs << down << "\n#\n\n";
 
     ofs << up << std::endl;
-    ofs << max[0] << " " << min[1] << " " << min[2] << std::endl;
-    ofs << max[0] << " " << max[1] << " " << min[2] << std::endl;
+    ofs << c.vertices[0] << std::endl;
+    ofs << c.vertices[2] << std::endl;
     ofs << down << "\n#\n\n";
 
     ofs << up << std::endl;
-    ofs << min[0] << " " << min[1] << " " << min[2] << std::endl;
-    ofs << min[0] << " " << max[1] << " " << min[2] << std::endl;
+    ofs << c.vertices[1] << std::endl;
+    ofs << c.vertices[3] << std::endl;
     ofs << down << "\n#\n\n";
 
     ofs << up << std::endl;
-    ofs << min[0] << " " << min[1] << " " << max[2] << std::endl;
-    ofs << min[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << c.vertices[7] << std::endl;
+    ofs << c.vertices[5] << std::endl;
     ofs << down << "\n#\n\n";
 
     ofs << up << std::endl;
-    ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
-    ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    ofs << c.vertices[6] << std::endl;
+    ofs << c.vertices[4] << std::endl;
     ofs << down << "\n#\n\n";
+
+    // Vector3D up, down;
+
+    // up = c.vertices[2];
+    // up = up - c.vertices[1];
+    // up = up / 2;
+    // up = up + c.vertices[1];
+
+    // down = c.vertices[4];
+    // down = down - c.vertices[7];
+    // down = down / 2;
+    // down = down + c.vertices[7];
+
+    // ofs << up << std::endl;
+    // ofs << c.vertices[2] << std::endl;
+    // ofs << c.vertices[4] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << c.vertices[3] << std::endl;
+    // ofs << c.vertices[5] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << c.vertices[1] << std::endl;
+    // ofs << c.vertices[7] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << c.vertices[0] << std::endl;
+    // ofs << c.vertices[6] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << c.vertices[2] << std::endl;
+    // ofs << c.vertices[4] << std::endl;
+    // ofs << down << "\n#\n\n";
+    // min = c[0];
+    // max = c[5];
+    // mid = (c[0] + c[5]) / 2;
+
+    // Vector3D up({mid[0], min[1], mid[2]}), down({mid[0], max[1], mid[2]});
+
+    // ofs << up << std::endl;
+    // ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
+    // ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << max[0] << " " << min[1] << " " << min[2] << std::endl;
+    // ofs << max[0] << " " << max[1] << " " << min[2] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << min[0] << " " << min[1] << " " << min[2] << std::endl;
+    // ofs << min[0] << " " << max[1] << " " << min[2] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << min[0] << " " << min[1] << " " << max[2] << std::endl;
+    // ofs << min[0] << " " << max[1] << " " << max[2] << std::endl;
+    // ofs << down << "\n#\n\n";
+
+    // ofs << up << std::endl;
+    // ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
+    // ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
+    // ofs << down << "\n#\n\n";
 
     return ofs;
 }
@@ -277,4 +258,21 @@ void Cuboid::Write_to_file(std::string filename, File_mode mode) const
     }
 
     Data_file.close();
+}
+
+Cuboid Cuboid::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename)
+{
+    // Apply reference model
+    Cuboid temp = (*this);
+
+    // update total position
+    this->orientation = rotation_matrix * orientation;
+    this->position = position + translation_vector;
+
+    temp.Rotation(this->orientation);
+    temp.Translate(this->position);
+
+    temp.Write_to_file(filename, Overwrite);
+
+    return *this;
 }

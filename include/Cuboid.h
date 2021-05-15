@@ -33,6 +33,9 @@ class Cuboid
 private:
     Vector3D vertices[SIZE];
 
+    Vector3D position;
+    Matrix3x3 orientation;
+
 public:
     /** @fn  Cuboid()
     *   @brief Default constructor
@@ -149,6 +152,8 @@ public:
     *   Array type of operator.Passing non-const object,for setting value of specific cell.
     */
     Vector3D &operator[](int index);
+
+    Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename);
 };
 
 #endif // CUBOID_H
