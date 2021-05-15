@@ -90,12 +90,6 @@ std::ofstream &operator<<(std::ofstream &ofs, const Cuboid &c)
 {
     ofs << std::setprecision(10) << std::fixed;
 
-    // 3 2 | 7 6
-    // 0 1 | 4 5
-
-    // 0 2 | 6 4
-    // 1 3 | 7 5
-
     Vector3D up, down;
 
     up = c.vertices[6];
@@ -133,73 +127,6 @@ std::ofstream &operator<<(std::ofstream &ofs, const Cuboid &c)
     ofs << c.vertices[4] << std::endl;
     ofs << down << "\n#\n\n";
 
-    // Vector3D up, down;
-
-    // up = c.vertices[2];
-    // up = up - c.vertices[1];
-    // up = up / 2;
-    // up = up + c.vertices[1];
-
-    // down = c.vertices[4];
-    // down = down - c.vertices[7];
-    // down = down / 2;
-    // down = down + c.vertices[7];
-
-    // ofs << up << std::endl;
-    // ofs << c.vertices[2] << std::endl;
-    // ofs << c.vertices[4] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << c.vertices[3] << std::endl;
-    // ofs << c.vertices[5] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << c.vertices[1] << std::endl;
-    // ofs << c.vertices[7] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << c.vertices[0] << std::endl;
-    // ofs << c.vertices[6] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << c.vertices[2] << std::endl;
-    // ofs << c.vertices[4] << std::endl;
-    // ofs << down << "\n#\n\n";
-    // min = c[0];
-    // max = c[5];
-    // mid = (c[0] + c[5]) / 2;
-
-    // Vector3D up({mid[0], min[1], mid[2]}), down({mid[0], max[1], mid[2]});
-
-    // ofs << up << std::endl;
-    // ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
-    // ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << max[0] << " " << min[1] << " " << min[2] << std::endl;
-    // ofs << max[0] << " " << max[1] << " " << min[2] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << min[0] << " " << min[1] << " " << min[2] << std::endl;
-    // ofs << min[0] << " " << max[1] << " " << min[2] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << min[0] << " " << min[1] << " " << max[2] << std::endl;
-    // ofs << min[0] << " " << max[1] << " " << max[2] << std::endl;
-    // ofs << down << "\n#\n\n";
-
-    // ofs << up << std::endl;
-    // ofs << max[0] << " " << min[1] << " " << max[2] << std::endl;
-    // ofs << max[0] << " " << max[1] << " " << max[2] << std::endl;
-    // ofs << down << "\n#\n\n";
-
     return ofs;
 }
 
@@ -235,6 +162,12 @@ Vector3D &Cuboid::operator[](int index)
 
 void Cuboid::Write_to_file(std::string filename, File_mode mode) const
 {
+    // Apply reference model
+    Cuboid temp = (*this);
+
+    temp.Rotation(temp.orientation);
+    temp.Translate(temp.position);
+
     std::ofstream Data_file;
 
     if (mode == 0)
@@ -245,11 +178,11 @@ void Cuboid::Write_to_file(std::string filename, File_mode mode) const
     if (Data_file.is_open())
     {
         if (mode == 0)
-            Data_file << *this;
+            Data_file << temp;
         else
         {
             Data_file << std::endl; // newline for cleaner output in the file
-            Data_file << *this;
+            Data_file << temp;
         }
     }
     else
@@ -262,17 +195,31 @@ void Cuboid::Write_to_file(std::string filename, File_mode mode) const
 
 Cuboid Cuboid::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename)
 {
-    // Apply reference model
-    Cuboid temp = (*this);
-
     // update total position
     this->orientation = rotation_matrix * orientation;
     this->position = position + translation_vector;
 
-    temp.Rotation(this->orientation);
-    temp.Translate(this->position);
-
-    temp.Write_to_file(filename, Overwrite);
+    // Send position to the file
+    (*this).Write_to_file(filename, Overwrite);
 
     return *this;
+}
+
+Cuboid Cuboid::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
+{
+    // update total position
+    this->orientation = rotation_matrix * orientation;
+    this->position = position + translation_vector;
+
+    return *this;
+}
+
+std::string Cuboid::Update_name(std::string &app)
+{
+    return (name.append(app));
+}
+
+std::string Cuboid::Get_name()
+{
+    return name;
 }

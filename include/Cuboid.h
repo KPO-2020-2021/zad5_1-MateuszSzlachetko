@@ -36,6 +36,8 @@ private:
     Vector3D position;
     Matrix3x3 orientation;
 
+    std::string name = "cuboid.dat";
+
 public:
     /** @fn  Cuboid()
     *   @brief Default constructor
@@ -154,6 +156,10 @@ public:
     Vector3D &operator[](int index);
 
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename);
+    Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
+
+    std::string Update_name(std::string &append);
+    std::string Get_name();
 };
 
 #endif // CUBOID_H

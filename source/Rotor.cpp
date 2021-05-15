@@ -104,6 +104,12 @@ std::ofstream &operator<<(std::ofstream &ofs, const Rotor &r)
 
 void Rotor::Write_to_file(std::string filename) const
 {
+    // Apply reference model
+    Rotor temp = (*this);
+
+    temp.Rotation(temp.orientation);
+    temp.Translate(temp.position);
+
     std::ofstream Data_file;
 
     Data_file.open(filename, std::ios::trunc);
@@ -111,7 +117,7 @@ void Rotor::Write_to_file(std::string filename) const
     if (Data_file.is_open())
     {
 
-        Data_file << *this;
+        Data_file << temp;
     }
     else
     {
@@ -147,17 +153,21 @@ Rotor Rotor::Translate(Vector3D translation_vector)
 
 Rotor Rotor::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename)
 {
-    // Apply reference model
-    Rotor temp = (*this);
-
     // update total position
     this->orientation = rotation_matrix * orientation;
     this->position = position + translation_vector;
 
-    temp.Rotation(this->orientation);
-    temp.Translate(this->position);
+    // Send position to the file
+    (*this).Write_to_file(filename);
 
-    temp.Write_to_file(filename);
+    return *this;
+}
+
+Rotor Rotor::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
+{
+    // update total position
+    this->orientation = rotation_matrix * orientation;
+    this->position = position + translation_vector;
 
     return *this;
 }
@@ -177,4 +187,14 @@ bool operator==(const Rotor &r1, const Rotor &r2)
         return false;
 
     return true;
+}
+
+std::string Rotor::Update_name(std::string &app)
+{
+    return (name.append(app));
+}
+
+std::string Rotor::Get_name()
+{
+    return name;
 }
