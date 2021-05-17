@@ -25,6 +25,9 @@ class Vector
 private:
     T Components[size];
 
+    static int Total;
+    static int Actual;
+
 public:
     /** @fn  Vector()
     *   @brief Default constructor
@@ -141,13 +144,42 @@ public:
     *   Array type of operator.Passing non-const object,for setting value of specific element.
     */
     T &operator[](int index);
+
+    Vector(const Vector &v);
+    static int Get_total() { return Total; };
+    static int Get_Actual() { return Actual; };
+    ~Vector();
 };
+
+template <typename T, const int size>
+Vector<T, size>::Vector(const Vector &v)
+{
+    Actual++;
+    Total++;
+
+    for (int i = 0; i < size; ++i)
+        Components[i] = v.Components[i];
+}
+
+template <typename T, const int size>
+Vector<T, size>::~Vector()
+{
+    --Actual;
+}
+
+template <typename T, const int size>
+int Vector<T, size>::Total = 0;
+
+template <typename T, const int size>
+int Vector<T, size>::Actual = 0;
 
 template <typename T, const int size>
 Vector<T, size>::Vector()
 {
     for (T &element : Components) // initialize each element with default value = 0
         element = 0;
+    Actual++;
+    Total++;
 }
 
 template <typename T, const int size>
@@ -156,6 +188,8 @@ Vector<T, size>::Vector(const std::initializer_list<T> &elements) //: Vector()
     int index = 0;
     for (T element : elements)
         Components[index++] = element;
+    Actual++;
+    Total++;
 }
 
 template <typename T, const int size>
@@ -166,6 +200,8 @@ Vector<T, size>::Vector(const std::vector<T> &elements) //: Vector()
         throw std::invalid_argument("Wrong parameters-Vector initialization");
     for (T element : elements)
         Components[index++] = element;
+    Actual++;
+    Total++;
 }
 
 template <typename T, const int size>
