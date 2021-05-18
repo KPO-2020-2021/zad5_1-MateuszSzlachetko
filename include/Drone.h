@@ -20,7 +20,10 @@ private:
 
 public:
     Drone();
-    ~Drone();
+
+    Drone Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
+
+    void Propeller_rotation();
 
     void Create_directory();
     void Add_files_names(PzG::LaczeDoGNUPlota &Lacze);
