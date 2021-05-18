@@ -4,6 +4,7 @@
 /** @file
  */
 
+#include "Figure.h"
 #include "Matrix3x3.h"
 #include "Vector3D.h"
 #include <fstream>
@@ -28,15 +29,13 @@ enum File_mode
  * 
  * Class which represents a cuboid.
  */
-class Cuboid
+class Cuboid : public Figure
 {
 private:
     Vector3D vertices[SIZE];
 
     Vector3D position;
     Matrix3x3 orientation;
-
-    std::string name = "cuboid.dat";
 
 public:
     /** @fn  Cuboid()
@@ -157,9 +156,6 @@ public:
 
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename);
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
-
-    std::string Update_name(std::string &append);
-    std::string Get_name();
 };
 
 #endif // CUBOID_H

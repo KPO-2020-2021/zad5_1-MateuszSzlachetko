@@ -1,12 +1,13 @@
 #ifndef Rotor_H
 #define Rotor_H
 
+#include "Figure.h"
 #include "Matrix3x3.h"
 #include "Vector3D.h"
 #include <fstream>
 #include <iomanip>
 
-class Rotor
+class Rotor : public Figure
 {
 private:
     Vector3D vertices[12];
@@ -15,8 +16,6 @@ private:
 
     Vector3D position;
     Matrix3x3 orientation;
-
-    std::string name = "rotor";
 
 public:
     Rotor();
@@ -35,9 +34,6 @@ public:
     friend bool operator==(const Rotor &r1, const Rotor &r2);
 
     void Write_to_file(std::string filename) const;
-
-    std::string Update_name(std::string &append);
-    std::string Get_name();
 };
 
 #endif // Rotor_H

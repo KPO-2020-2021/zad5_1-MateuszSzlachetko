@@ -1,6 +1,6 @@
 #include "Rotor.h"
 
-Rotor::Rotor()
+Rotor::Rotor() : Figure("rotor")
 {
     // Default values from example drone project
 
@@ -27,7 +27,7 @@ Rotor::Rotor()
                              0, 0, 1});
 }
 
-Rotor::Rotor(double x, double y, double z, double a, double b, double c)
+Rotor::Rotor(double x, double y, double z, double a, double b, double c) : Figure("rotor")
 {
     // x value on x axis,   a- value on x axis for rotor corner b-value on y axis for rotor corner
     // z,c values on z axis-height
@@ -187,14 +187,4 @@ bool operator==(const Rotor &r1, const Rotor &r2)
         return false;
 
     return true;
-}
-
-std::string Rotor::Update_name(std::string &app)
-{
-    return (name.append(app));
-}
-
-std::string Rotor::Get_name()
-{
-    return name;
 }

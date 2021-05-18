@@ -1,6 +1,6 @@
 #include "Cuboid.h"
 
-Cuboid::Cuboid()
+Cuboid::Cuboid() : Figure("cuboid.dat")
 {
     for (Vector3D vertice : vertices)
         vertice = Vector3D({0, 0, 0});
@@ -12,7 +12,7 @@ Cuboid::Cuboid()
                              0, 0, 1});
 }
 
-Cuboid::Cuboid(double x1, double y1, double z1, double x2, double y2, double z2)
+Cuboid::Cuboid(double x1, double y1, double z1, double x2, double y2, double z2) : Figure("cuboid.dat")
 {
     if (x1 == x2 || y1 == y2 || z1 == z2) // ~~> vertices are not oposing
         throw std::invalid_argument("Not oposing vertices passed in a constructor");
@@ -34,7 +34,7 @@ Cuboid::Cuboid(double x1, double y1, double z1, double x2, double y2, double z2)
                              0, 0, 1});
 }
 
-Cuboid::Cuboid(std::vector<Vector3D> &vectors)
+Cuboid::Cuboid(std::vector<Vector3D> &vectors) : Figure("cuboid.dat")
 {
     int index = 0;
     for (Vector3D vertice : vectors)
@@ -212,14 +212,4 @@ Cuboid Cuboid::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
     this->position = position + translation_vector;
 
     return *this;
-}
-
-std::string Cuboid::Update_name(std::string &app)
-{
-    return (name.append(app));
-}
-
-std::string Cuboid::Get_name()
-{
-    return name;
 }
