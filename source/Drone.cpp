@@ -18,18 +18,15 @@ Drone::Drone()
 {
     Create_directory();
 
-    Matrix3x3 test({1, 0, 0,
+    Matrix3x3 base({1, 0, 0,
                     0, 1, 0,
                     0, 0, 1});
 
-    body = Cuboid(0, 0, 0, 30, 30, 30);
-
     Vector3D init_body_height({0, 0, 0});
 
-    // if (body[0][2] < 0) // w default constructorze nie potrzebne,przenieść potem do nie defaultowego
-    //     init_body_height[2] = -body[0][2];
+    body = Cuboid(-15, -15, 0, 15, 15, 30);
 
-    body.Move(test, init_body_height, directory + body.Get_name());
+    body.Move(base, Vector3D(), directory + body.Get_name());
 
     std::string appender;
     for (int i = 0; i < 4; ++i)
@@ -56,6 +53,59 @@ Drone::Drone()
     rotors[1].Write_to_file(directory + rotors[1].Get_name());
     rotors[2].Write_to_file(directory + rotors[2].Get_name());
     rotors[3].Write_to_file(directory + rotors[3].Get_name());
+}
+
+Drone::Drone(Cuboid b, Rotor r)
+{
+    Create_directory();
+
+    Matrix3x3 base({1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1});
+
+    Vector3D init_push;
+
+    body = b;
+
+    Vector<double, 2> position = Position();
+
+    if (position[0] != 0 && position[1] != 0 && body[0][2] != 0)
+        init_push = Vector3D({-position[0], -position[1], ((-1) * body[0][2])});
+    else if (position[0] != 0 && position[1] != 0)
+        init_push = Vector3D({-position[0], -position[1], 0});
+
+    body.Translate(init_push);
+
+    body.Move(base, Vector3D(), directory + body.Get_name());
+
+    std::string appender;
+    for (int i = 0; i < 4; ++i)
+    {
+        rotors[i] = r;
+
+        // Update rotor file name
+        appender.append(std::to_string(i + 1));
+        appender.append(".dat");
+        rotors[i].Update_name(appender);
+
+        // reset appender
+        appender = std::string();
+    }
+    // Move rotors to body corners
+
+    rotors[0].Translate(body[7]);
+    rotors[1].Translate(body[5]);
+    rotors[2].Translate(body[6]);
+    rotors[3].Translate(body[4]);
+
+    // Save rotors positions
+    rotors[0].Write_to_file(directory + rotors[0].Get_name());
+    rotors[1].Write_to_file(directory + rotors[1].Get_name());
+    rotors[2].Write_to_file(directory + rotors[2].Get_name());
+    rotors[3].Write_to_file(directory + rotors[3].Get_name());
+
+    // To set drone if needed to the starting position
+    Move(base, Vector3D({position[0], position[1], 0}));
 }
 
 void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze)
@@ -137,4 +187,30 @@ void Drone::Propeller_rotation()
     rotors[1].Translate(body[5]);
     rotors[2].Translate(body[6]);
     rotors[3].Translate(body[4]);
+}
+
+Cuboid Drone::operator[](int index) const
+{
+    if (index != 0)
+        throw std::invalid_argument("Index out of range");
+    else
+    {
+        return body; // return copy,which let's us only to read the value
+    }
+}
+
+Vector<double, 2> Drone::Position()
+{
+    Vector<double, 2> center, temp1, temp2;
+
+    temp1[0] = body[0][0] + (body.Get_position())[0]; // model + total position (x)
+    temp1[1] = body[0][1] + (body.Get_position())[1]; // model + total position (y)
+
+    temp2[0] = body[3][0] + (body.Get_position())[0];
+    temp2[1] = body[3][1] + (body.Get_position())[1];
+
+    // two points in total position
+    center = (temp1 + temp2) / 2;
+
+    return center;
 }

@@ -4,83 +4,76 @@
 /** @file
  */
 
-#include "Cuboid.h"
+#include "Drone.h"
 #include "lacze_do_gnuplota.hh"
 #include <chrono>
 #include <thread>
 
 /** @class Scene
  * 
- * Class which holds a specific cuboid object
+ * Class which holds drones objects
  * and let's user operate on it.
  */
 class Scene
 {
+private:
+    Drone Drones[2];
+
+    Drone *Active_drone;
+
+    PzG::LaczeDoGNUPlota Link;
+
+    std::string surface;
+
+    void Draw_surface(int x_min, int x_max, int y_min, int y_max);
+
 public:
-    Cuboid _cuboid;
-
-    Matrix3x3 rotation_matrix;
-    Matrix3x3 previous_rotation_matrix;
-    Matrix3x3 total_rotation_matrix;
-
-    Vector3D translation;
-    Vector3D total_translation;
-
-public:
-    /** @fn  Scene()
-    *   @brief Default constructor
-    *   
-    *   Each element is created with default value,
-    *   specification of cuboid is also made there.
-    */
     Scene();
 
-    /** @fn void Get_rotation_sequence()
-    *   A function for reading rotation sequence.
-    *   
-    *   Terminates with a '.' ,basic invalid input handling.    
-    */
-    void Get_rotation_sequence();
+    bool Choose_drone(int index);
+    void List_drones();
 
-    /** @fn void Get_translation_vector()
-    *   A function for reading translation vector.
-    */
-    void Get_translation_vector();
+    void Draw();
+    void Draw_path(std::vector<Vector3D> total_path);
+    bool Calculate_path(double angle, double length, std::vector<Vector3D> &total_path);
 
-    /** @fn void Animate(PzG::LaczeDoGNUPlota &Lacze, int number_of_operations)
-    *   @brief Animate holded cuboid
-    * 
-    *   After reading new rotation or translation,Cuboid can be animated in gnuplot.
-    *   In this version of scene every small change is added or multiplied
-    *   to total result in order to remember current position.
-    * 
-    *   After making whole animation some objects are cleared and the others are filled
-    *   with new values.
-    * 
-    *   There will be more improvements in future task.
-    */
-    void Animate(PzG::LaczeDoGNUPlota &Lacze, int number_of_operations);
+    bool Animate(double angle, std::vector<Vector3D> &total_path);
 
-    /** @fn  void Show_rotation_matrix()
-    *   A basic menu function.
-    */
-    void Show_rotation_matrix();
+    bool Add_drone(int drone_id, Drone drone);
+    bool Remove_drone(int drone_id);
+    // /** @fn  Scene()
+    // *   @brief Default constructor
+    // *
+    // *   Each element is created with default value,
+    // *   specification of cuboid is also made there.
+    // */
+    // Scene();
 
-    /** @fn  void Display_vertices()
-    *   A basic menu function.
-    */
-    void Display_vertices();
+    // /** @fn void Get_rotation_sequence()
+    // *   A function for reading rotation sequence.
+    // *
+    // *   Terminates with a '.' ,basic invalid input handling.
+    // */
+    // void Get_rotation_sequence();
 
-    /** @fn  void Check_side_length()
-    *   A basic menu function.
-    */
-    void Check_side_length();
+    // /** @fn void Get_translation_vector()
+    // *   A function for reading translation vector.
+    // */
+    // void Get_translation_vector();
 
-    /** @fn  void Set_previous_rotation()
-    *   After calling current rotation matrix is filled with 
-    *   the previous one
-    */
-    void Set_previous_rotation();
+    // /** @fn void Animate(PzG::LaczeDoGNUPlota &Lacze, int number_of_operations)
+    // *   @brief Animate holded cuboid
+    // *
+    // *   After reading new rotation or translation,Cuboid can be animated in gnuplot.
+    // *   In this version of scene every small change is added or multiplied
+    // *   to total result in order to remember current position.
+    // *
+    // *   After making whole animation some objects are cleared and the others are filled
+    // *   with new values.
+    // *
+    // *   There will be more improvements in future task.
+    // */
+    // void Animate(PzG::LaczeDoGNUPlota &Lacze, int number_of_operations);
 };
 
 #endif // SCENE_H

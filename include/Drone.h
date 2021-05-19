@@ -20,6 +20,7 @@ private:
 
 public:
     Drone();
+    Drone(Cuboid b, Rotor r);
 
     Drone Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
 
@@ -28,6 +29,10 @@ public:
     void Create_directory();
     void Add_files_names(PzG::LaczeDoGNUPlota &Lacze);
     void Remove_files_names(PzG::LaczeDoGNUPlota &Lacze);
+
+    Vector<double, 2> Position();
+
+    Cuboid operator[](int index) const;
 };
 
 #endif // DRONE_H

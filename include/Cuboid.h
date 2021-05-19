@@ -156,6 +156,8 @@ public:
 
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename);
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
+
+    Vector3D Get_position() const;
 };
 
 #endif // CUBOID_H

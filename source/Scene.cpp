@@ -2,154 +2,234 @@
 
 Scene::Scene()
 {
-    _cuboid = Cuboid(-30, -30, -30, 30, 30, 30);
+    surface = "../data/surface.dat";
+    Draw_surface(-50, 350, -50, 350);
 
-    rotation_matrix = Matrix3x3({1, 0, 0,
-                                 0, 1, 0,
-                                 0, 0, 1});
+    Active_drone = NULL;
 
-    previous_rotation_matrix = Matrix3x3({1, 0, 0,
-                                          0, 1, 0,
-                                          0, 0, 1});
+    Link.Inicjalizuj();
+    Link.ZmienTrybRys(PzG::TR_3D);
 
-    total_rotation_matrix = Matrix3x3({1, 0, 0,
-                                       0, 1, 0,
-                                       0, 0, 1});
+    Link.UstawZakresX(-50, 350);
+    Link.UstawZakresY(-50, 350);
+    Link.UstawZakresZ(-50, 150);
+    Link.UstawRotacjeXZ(64, 65);
 
-    translation = Vector3D();
-    total_translation = Vector3D();
+    Link.DodajNazwePliku(surface.c_str());
+
+    Link.Rysuj();
 }
 
-void Scene::Animate(PzG::LaczeDoGNUPlota &Lacze, int number_of_operations)
+void Scene::Draw_surface(int x_min, int x_max, int y_min, int y_max)
 {
-    int i = 0;
-    Cuboid cuboid_temp;
-    Vector3D translation_temp;
+    std::ofstream Data_file;
 
-    cuboid_temp = _cuboid;
-    translation_temp = translation / number_of_operations; // whole translation will be done after whole animation
+    // init default value for actual x and y
+    double x_actual = x_min, y_acutal = y_min;
 
-    std::cout << "Animating..." << std::endl;
+    // calculate how many times it should be printed (depending on grid size)
+    int x_times = (x_max - x_min) / 20;
+    int y_times = (y_max - y_min) / 20;
 
-    //First move to set previous position
-    cuboid_temp.Translate(total_translation);
-    cuboid_temp.Rotation(total_rotation_matrix);
-    cuboid_temp.Write_to_file("../data/vertices.dat", Overwrite);
+    Data_file.open(surface, std::ios::trunc);
 
-    std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000)); // wait 1s to open GNUplot window
-    Lacze.Rysuj();                                                     // first drawing
-
-    //cuboid_temp = _cuboid;
-    while (i < number_of_operations)
+    if (Data_file.is_open())
     {
-        // increment total postion
-        total_translation = total_translation + translation_temp;
-        total_rotation_matrix = rotation_matrix * total_rotation_matrix;
+        for (int i = 0; i <= y_times; ++i)
+        {
+            for (int j = 0; j <= x_times; ++j)
+            {
+                Data_file << Vector3D({x_actual, y_acutal, 0}) << std::endl;
+                x_actual += 20; // enlarge element with grid size
+            }
+            Data_file << std::endl;
 
-        cuboid_temp.Translate(total_translation);
-        cuboid_temp.Rotation(total_rotation_matrix);
-        cuboid_temp.Write_to_file("../data/vertices.dat", Overwrite);
+            x_actual = x_min; // reset x to default
+            y_acutal += 20;   // enlarge element with grid size
+        }
+    }
+    else
+    {
+        throw std::invalid_argument("[Surface]file opening error\n");
+    }
 
-        cuboid_temp = _cuboid; //reset values
-        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
-        Lacze.Rysuj();
+    Data_file.close();
+}
 
+bool Scene::Add_drone(int drone_id, Drone drone)
+{
+    if (drone_id < 0 || drone_id > 1) // amount of drones
+        return false;
+
+    Drones[drone_id] = drone;
+    Drones[drone_id].Add_files_names(Link);
+
+    return true;
+}
+
+bool Scene::Remove_drone(int drone_id)
+{
+    if (drone_id < 0 || drone_id > 1) // amount of drones
+        return false;
+
+    Drones[drone_id].Remove_files_names(Link); // usunąć ostrzeżenie
+
+    return true;
+}
+
+void Scene::List_drones()
+{
+    std::cout << "0 - Position (x,y) " << Drones[0].Position() << std::endl; // pass x,y values
+    std::cout << "1 - Position (x,y) " << Drones[1].Position() << std::endl;
+}
+
+void Scene::Draw()
+{
+    Link.Rysuj();
+}
+
+bool Scene::Choose_drone(int index)
+{
+    if (index < 0 || index > 1) // amount of drones
+        return false;
+
+    Active_drone = &Drones[index];
+    return true;
+}
+
+bool Scene::Calculate_path(double angle, double length, std::vector<Vector3D> &total_path)
+{
+    if (Active_drone == NULL)
+    {
+        std::cerr << "No active drone chosen" << std::endl;
+        return false;
+    }
+    Matrix3x3 r;
+    set_Rotation_OZ(r, angle);
+
+    Vector3D height({0, 0, 100}); // Move drone into the air
+    Vector3D route({length, 0, 0});
+
+    route = r * route; // move route in space
+
+    total_path.push_back(height);
+    total_path.push_back(route);
+    total_path.push_back(height * (-1)); // x,y are 0 so only height will be decreased
+
+    Draw_path(total_path);
+
+    return true;
+}
+
+void Scene::Draw_path(std::vector<Vector3D> total_path)
+{
+    std::ofstream Data_file;
+    Vector3D pos;
+    // pass x,y value of active drone
+    pos[0] = (Active_drone->Position())[0];
+    pos[1] = (Active_drone->Position())[1];
+
+    Data_file.open("../data/path.dat", std::ios::trunc);
+
+    if (Data_file.is_open())
+    {
+        Data_file << pos << std::endl;
+
+        Data_file << pos + total_path[0] << std::endl;
+
+        Data_file << pos + total_path[0] + total_path[1] << std::endl;
+
+        Data_file << pos + total_path[0] + total_path[1] + total_path[2] << std::endl;
+    }
+    else
+    {
+        throw std::invalid_argument("[Surface]file opening error\n");
+    }
+    Link.DodajNazwePliku("../data/path.dat");
+    Draw();
+
+    Data_file.close();
+}
+
+bool Scene::Animate(double angle, std::vector<Vector3D> &total_path)
+{
+    Vector3D Vertical_flight, Horizontal_flight;
+    int i = 0, frames = 60;
+
+    Matrix3x3 rot{1, 0, 0,
+                  0, 1, 0,
+                  0, 0, 1};
+    Matrix3x3 rot2;
+
+    Vertical_flight = total_path[0];
+    total_path.erase(total_path.begin());
+
+    Vertical_flight = Vertical_flight / 120; // 120 parts | height passed in parts/frames seconds
+
+    while (i < 120) // go up
+    {
+        Active_drone->Move(rot, Vertical_flight);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / frames));
+        Draw();
         i++;
     }
+    i = 0;
 
-    // store current rotation matrix;
-    previous_rotation_matrix = rotation_matrix;
-
-    // reset rotation matrix
-    rotation_matrix = Matrix3x3({1, 0, 0,
-                                 0, 1, 0,
-                                 0, 0, 1});
-    // reset translation vector
-    translation = Vector3D();
-
-    std::cout << "End of animation" << std::endl;
-}
-
-void Scene::Get_rotation_sequence()
-{
-    char axis;
-    double angle;
-    Matrix3x3 temp;
-
-    std::cout << "Choose rotation axis,and enter angle value" << std::endl;
-
-    while (axis != '.')
+    if (angle < 0)
+        set_Rotation_OZ(rot2, -1);
+    else
+        set_Rotation_OZ(rot2, 1);
+    while (i < std::abs(angle)) // Rotate
     {
-        std::cin >> axis;
-
-        if (axis == 'x' || axis == 'y' || axis == 'z')
-        {
-            std::cin >> angle;
-            if (std::cin.fail())
-            {
-                std::cerr << "Wrong angle,repeat whole process" << std::endl;
-                std::cin.clear();
-                std::cin.ignore(10000, '\n');
-            }
-            else
-            {
-                if (axis == 'x')
-                {
-                    set_Rotation_OX(temp, angle);
-                }
-
-                if (axis == 'y')
-                {
-                    set_Rotation_OY(temp, angle);
-                }
-
-                if (axis == 'z')
-                {
-                    set_Rotation_OZ(temp, angle);
-                }
-
-                this->rotation_matrix = temp * this->rotation_matrix; // nowa * aktualna od lewej strony
-            }
-        }
-        else if (axis != '.') // ending term
-        {
-            std::cout << "Choose between 'x' 'y' 'z'" << std::endl;
-        }
+        Active_drone->Move(rot2, Vector3D());
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / frames));
+        Draw();
+        i++;
     }
-}
+    i = 0;
 
-void Scene::Get_translation_vector()
-{
-    std::cout << "Enter translation vector" << std::endl;
+    Horizontal_flight = total_path[0];
+    total_path.erase(total_path.begin());
+    Horizontal_flight = Horizontal_flight / 120;
 
-    std::cin >> translation; // get translation vector
-}
+    while (i < 120) // go forward
+    {
+        Active_drone->Move(rot, Horizontal_flight);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / frames));
+        Draw();
+        i++;
+    }
+    i = 0;
 
-void Scene::Show_rotation_matrix()
-{
-    std::cout << std::fixed;
+    if (angle < 0)
+        set_Rotation_OZ(rot2, 1);
+    else
+        set_Rotation_OZ(rot2, -1);
+    while (i < std::abs(angle)) // Rotate backward
+    {
+        Active_drone->Move(rot2, Vector3D());
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / frames));
+        Draw();
+        i++;
+    }
+    i = 0;
 
-    std::cout << "Rotation matrix: " << std::endl;
-    std::cout << previous_rotation_matrix << std::endl;
-}
-void Scene::Display_vertices()
-{
-    Cuboid temp = _cuboid; // get default points
+    Vertical_flight = total_path[0];
+    total_path.erase(total_path.begin());
 
-    // calculate current position
-    temp.Translate(total_translation);
-    temp.Rotation(total_rotation_matrix);
+    Vertical_flight = Vertical_flight / 120;
 
-    std::cout << temp << std::endl;
-}
-void Scene::Check_side_length()
-{
-    std::cout << std::endl;
-    //_cuboid.Side_length();
-    std::cout << std::endl;
-}
+    while (i < 120) // go down
+    {
+        Active_drone->Move(rot, Vertical_flight);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / frames));
+        Draw();
+        i++;
+    }
+    i = 0;
 
-void Scene::Set_previous_rotation()
-{
-    rotation_matrix = previous_rotation_matrix;
+    std::this_thread::sleep_for(std::chrono::nanoseconds(500000000));
+    Link.UsunNazwePliku("../data/path.dat");
+    Draw();
+    return true;
 }

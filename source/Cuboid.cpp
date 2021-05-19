@@ -213,3 +213,9 @@ Cuboid Cuboid::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
 
     return *this;
 }
+
+Vector3D Cuboid::Get_position() const
+{
+    Vector3D ret = position;
+    return ret;
+}
