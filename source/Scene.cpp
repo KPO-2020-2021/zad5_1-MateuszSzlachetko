@@ -72,7 +72,7 @@ bool Scene::Remove_drone(int drone_id)
     if (drone_id < 0 || drone_id > 1) // amount of drones
         return false;
 
-    Drones[drone_id].Remove_files_names(Link); // usunąć ostrzeżenie
+    Drones[drone_id].Remove_files_names(Link);
 
     return true;
 }
@@ -231,5 +231,80 @@ bool Scene::Animate(double angle, std::vector<Vector3D> &total_path)
     std::this_thread::sleep_for(std::chrono::nanoseconds(500000000));
     Link.UsunNazwePliku("../data/path.dat");
     Draw();
+    return true;
+}
+
+bool Scene::Change_colour(int colour)
+{
+    if (Active_drone == NULL)
+    {
+        std::cerr << "No active drone chosen" << std::endl;
+        return false;
+    }
+
+    if (Active_drone == &Drones[0])
+    {
+        Drones[0].Remove_files_names(Link);
+        Drones[0].Add_files_names(Link, colour);
+    }
+
+    if (Active_drone == &Drones[1])
+    {
+        Drones[1].Remove_files_names(Link);
+        Drones[1].Add_files_names(Link, colour);
+    }
+
+    Draw();
+
+    return true;
+}
+
+bool Scene::Round_route(double radius)
+{
+    if (Active_drone == NULL)
+    {
+        std::cerr << "No active drone chosen" << std::endl;
+        return false;
+    }
+    Matrix3x3 rot{1, 0, 0,
+                  0, 1, 0,
+                  0, 0, 1};
+
+    Matrix3x3 rot1{1, 0, 0,
+                   0, 1, 0,
+                   0, 0, 1};
+
+    Vector3D Radius({radius, 0, 0});
+
+    Vector3D init({Radius[0] / 120, 0, 0.8333});
+
+    for (int i = 0; i < 120; ++i) // put into orbit
+    {
+        Active_drone->Move(rot, init);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
+        Draw();
+    }
+
+    Active_drone->Move(rot, Radius * (-1)); // Move drone to the center
+    set_Rotation_OZ(rot1, 1);
+
+    for (int i = 0; i < 360; ++i)
+    {
+        Active_drone->Move(rot1, Radius); // Move to orbit,rotate
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 90));
+        Draw();
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 90));
+        Active_drone->Move(rot, Radius * (-1)); // Move drone to the center
+        Radius = rot1 * Radius;                 // rotate the radius
+    }
+    Active_drone->Move(rot, Radius); // Move to orbit
+
+    for (int i = 0; i < 120; ++i) // Get drone back
+    {
+        Active_drone->Move(rot, init * (-1));
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
+        Draw();
+    }
+
     return true;
 }

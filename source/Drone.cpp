@@ -115,10 +115,6 @@ void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze)
         .ZmienSposobRys(PzG::SR_Ciagly)
         .ZmienSzerokosc(2)
         .ZmienKolor(8);
-    Lacze.DodajNazwePliku((directory + body.Get_name()).c_str())
-        .ZmienSposobRys(PzG::SR_Punktowy)
-        .ZmienSzerokosc(1)
-        .ZmienKolor(5);
 
     // whole line for drone's rotor converted to char *
     for (int i = 0; i < 4; ++i)
@@ -127,6 +123,24 @@ void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze)
             .ZmienSposobRys(PzG::SR_Ciagly)
             .ZmienSzerokosc(2)
             .ZmienKolor(8);
+    }
+}
+
+void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze, int colour)
+{
+    // whole line for drone's body converted to char *
+    Lacze.DodajNazwePliku((directory + body.Get_name()).c_str())
+        .ZmienSposobRys(PzG::SR_Ciagly)
+        .ZmienSzerokosc(2)
+        .ZmienKolor(colour);
+
+    // whole line for drone's rotor converted to char *
+    for (int i = 0; i < 4; ++i)
+    {
+        Lacze.DodajNazwePliku((directory + rotors[i].Get_name()).c_str())
+            .ZmienSposobRys(PzG::SR_Ciagly)
+            .ZmienSzerokosc(2)
+            .ZmienKolor(colour);
     }
 }
 

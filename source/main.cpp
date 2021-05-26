@@ -14,6 +14,8 @@ int main()
     char option = ' ';
     int i = 0, o = 0;
     int current_drone = -1;
+    int colour = 1;
+    double radius = 0;
     double angle = 0;
     double length = 0;
     std::vector<Vector3D> total_path;
@@ -28,7 +30,7 @@ int main()
         std::cin >> option;
         //system("clear");
 
-        if (option != 'c' && option != 'r' && option != 'm' && option != 'q')
+        if (option != 'c' && option != 'r' && option != 'm' && option != 'q' && option != 'd' && option != 'l')
         {
             std::cerr << "[ERROR] Invalid menu argument" << std::endl;
             option = ' ';
@@ -60,6 +62,24 @@ int main()
             if (scene_3D.Calculate_path(angle, length, total_path))
                 scene_3D.Animate(angle, total_path);
             break;
+        case 'd':
+            std::cout << "Insert colour" << std::endl;
+            std::cin >> colour;
+            if (std::cin.fail())
+            {
+                throw std::invalid_argument("Wrong colour passed");
+            }
+            scene_3D.Change_colour(colour);
+            break;
+        case 'l':
+            std::cout << "Insert radius" << std::endl;
+            std::cin >> radius;
+            if (std::cin.fail())
+            {
+                throw std::invalid_argument("Wrong radius passed");
+            }
+            scene_3D.Round_route(radius);
+            break;
         default:
             break;
         }
@@ -73,6 +93,8 @@ void Display_menu()
 {
     std::cout << "\n c-choose drone" << std::endl;
     std::cout << " r-insert route" << std::endl;
+    std::cout << " d-change active drone colour" << std::endl;
+    std::cout << " l-round route from modification" << std::endl;
     std::cout << " m-show menu" << std::endl
               << std::endl;
     std::cout << " q-quit" << std::endl;

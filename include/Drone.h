@@ -28,6 +28,7 @@ public:
 
     void Create_directory();
     void Add_files_names(PzG::LaczeDoGNUPlota &Lacze);
+    void Add_files_names(PzG::LaczeDoGNUPlota &Lacze, int colour);
     void Remove_files_names(PzG::LaczeDoGNUPlota &Lacze);
 
     Vector<double, 2> Position();
