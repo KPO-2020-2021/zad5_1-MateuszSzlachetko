@@ -27,3 +27,7 @@ Przy wywołaniu make,dokumentacja doxygen utworzy się automatycznie w folderze 
 W celu obejrzenia jej należy przejść do folderu i otworzyć plik index w przeglądarce.
 
 W razie problemów proszę o kontakt <259370@student.pwr.edu.pl>
+
+## Rozszerzenia
+
+Możliwość wyboru dowolnego z dostępnych kolorów dla wybranego drona.
