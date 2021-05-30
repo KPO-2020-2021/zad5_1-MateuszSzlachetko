@@ -154,9 +154,25 @@ public:
     */
     Vector3D &operator[](int index);
 
+    /** @fn Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename)
+    *   @brief Move Cuboid in 3D
+    * 
+    *  Increse total rotation and position,and send current values to file (after applying reference model)
+    */
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector, std::string filename);
+
+    /** @fn Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
+    *   @brief Move Cuboid in 3D
+    * 
+    *  Increse total rotation and position
+    */
     Cuboid Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector);
 
+    /** @fn Vector3D Get_position() const
+    *   @brief Cuboid position (x,y,z)
+    * 
+    *  Returns current (total) position.
+    */
     Vector3D Get_position() const;
 };
 

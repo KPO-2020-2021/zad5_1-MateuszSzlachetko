@@ -188,3 +188,13 @@ bool operator==(const Rotor &r1, const Rotor &r2)
 
     return true;
 }
+
+Vector3D Rotor::operator[](int index) const
+{
+    if (index < 0 || index > 11)
+        throw std::invalid_argument("Index out of range");
+    else
+    {
+        return vertices[index]; // return copy,which let's us only to read the value
+    }
+}

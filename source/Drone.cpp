@@ -108,10 +108,10 @@ Drone::Drone(Cuboid b, Rotor r)
     Move(base, Vector3D({position[0], position[1], 0}));
 }
 
-void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze)
+void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Link)
 {
     // whole line for drone's body converted to char *
-    Lacze.DodajNazwePliku((directory + body.Get_name()).c_str())
+    Link.DodajNazwePliku((directory + body.Get_name()).c_str())
         .ZmienSposobRys(PzG::SR_Ciagly)
         .ZmienSzerokosc(2)
         .ZmienKolor(8);
@@ -119,17 +119,17 @@ void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze)
     // whole line for drone's rotor converted to char *
     for (int i = 0; i < 4; ++i)
     {
-        Lacze.DodajNazwePliku((directory + rotors[i].Get_name()).c_str())
+        Link.DodajNazwePliku((directory + rotors[i].Get_name()).c_str())
             .ZmienSposobRys(PzG::SR_Ciagly)
             .ZmienSzerokosc(2)
             .ZmienKolor(8);
     }
 }
 
-void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze, int colour)
+void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Link, int colour)
 {
     // whole line for drone's body converted to char *
-    Lacze.DodajNazwePliku((directory + body.Get_name()).c_str())
+    Link.DodajNazwePliku((directory + body.Get_name()).c_str())
         .ZmienSposobRys(PzG::SR_Ciagly)
         .ZmienSzerokosc(2)
         .ZmienKolor(colour);
@@ -137,22 +137,22 @@ void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Lacze, int colour)
     // whole line for drone's rotor converted to char *
     for (int i = 0; i < 4; ++i)
     {
-        Lacze.DodajNazwePliku((directory + rotors[i].Get_name()).c_str())
+        Link.DodajNazwePliku((directory + rotors[i].Get_name()).c_str())
             .ZmienSposobRys(PzG::SR_Ciagly)
             .ZmienSzerokosc(2)
             .ZmienKolor(colour);
     }
 }
 
-void Drone::Remove_files_names(PzG::LaczeDoGNUPlota &Lacze)
+void Drone::Remove_files_names(PzG::LaczeDoGNUPlota &Link)
 {
     // whole line for drone's body converted to char *
-    Lacze.UsunNazwePliku((directory + body.Get_name()).c_str());
+    Link.UsunNazwePliku((directory + body.Get_name()).c_str());
 
     // whole line for drone's rotor converted to char *
     for (int i = 0; i < 4; ++i)
     {
-        Lacze.UsunNazwePliku((directory + rotors[i].Get_name()).c_str());
+        Link.UsunNazwePliku((directory + rotors[i].Get_name()).c_str());
     }
 }
 

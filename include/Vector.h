@@ -37,6 +37,21 @@ public:
     */
     Vector();
 
+    /** @fn  ~Vector()
+    *   @brief Default destructor
+    *   
+    *   Decrease actual value of
+    */
+    ~Vector();
+
+    /** @fn  Vector(const Vector &v)
+    *   @brief Copying constructor
+    *   
+    *   Each element of passed vector is copied to *this vector 
+    *   (for Total,actual vector count)
+    */
+    Vector(const Vector &v);
+
     /** @fn   Vector(const std::initializer_list<T> &elements)
     *   @brief Numbers constructor
     *   
@@ -145,10 +160,17 @@ public:
     */
     T &operator[](int index);
 
-    Vector(const Vector &v);
+    /** @fn static int Get_total()
+    *   Get Total vector amount
+    * 
+    */
     static int Get_total() { return Total; };
+
+    /** @fn static int Get_Actual()
+    *   Get Actual vector amount
+    * 
+    */
     static int Get_Actual() { return Actual; };
-    ~Vector();
 };
 
 template <typename T, const int size>
